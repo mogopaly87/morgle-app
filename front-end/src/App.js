@@ -2,8 +2,8 @@ import logo from './logo.svg';
 import './App.css';
 import Board from './component/Board';
 import Keyboard from './component/Keyboard';
-import { createContext, useState } from 'react';
-import { boardDefault } from './Words'
+import { createContext, useEffect, useState } from 'react';
+import { boardDefault, generateWordSet } from './Words'
 
 export const AppContext = createContext();
 
@@ -12,6 +12,12 @@ function App() {
   const [currAttempt, setCurrAttempt] = useState({attempt: 0, letterPos: 0})
 
   const correctWord = "RIGHT";
+
+  useEffect(() => {
+    generateWordSet().then((words) =>{
+      console.log(words);
+    })
+  }, [])
 
   const onSelectLetter = (keyVal) => {
     if (currAttempt.letterPos > 4) return;
