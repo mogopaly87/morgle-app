@@ -4,6 +4,7 @@ import Board from './component/Board';
 import Keyboard from './component/Keyboard';
 import { createContext, useEffect, useState } from 'react';
 import { boardDefault, generateWordSet } from './Words';
+import GameOver from './component/GameOver';
 import axios from 'axios';
 
 export const AppContext = createContext();
@@ -13,26 +14,28 @@ function App() {
   const [currAttempt, setCurrAttempt] = useState({attempt: 0, letterPos: 0})
   const [wordSet, setWordSet] = useState(new Set())
   const [disabledLetters, setDisabledLetters] = useState([])
+  const [gameOver, setGameOver] = useState({gameOver: false, guessedWord: false})
+  const [correctWord, setCorrectWord] = useState('')
 
-  const correctWord = "RIGHT";
+  
 
   useEffect(() => {
     const loadWords = async () => {
       const wordBankArr = [];
+      let tempCorrectWord;
+
       const response = await axios.get(`/api`);
       const booksData = response.data;
       for await(const item of booksData) {
         wordBankArr.push(item['aback'])
         }
+        tempCorrectWord = wordBankArr[Math.floor(Math.random() * wordBankArr.length)]
       
         let newWordSet = new Set(wordBankArr)
         setWordSet(newWordSet)
-        
+        setCorrectWord(tempCorrectWord)
       }
     loadWords();
-    // generateWordSet().then((words) => {
-    //   setWordSet(words.wordSet)
-    // })
   }, [])
 
   const onSelectLetter = (keyVal) => {
@@ -60,17 +63,20 @@ function App() {
     }
 
     if (wordSet.has(currWord.toLowerCase())) {
-
+      setCurrAttempt({attempt: currAttempt.attempt + 1, letterPos: 0})
     } else {
       alert("Word Not Found")
     }
 
     if (currWord === correctWord){
-      alert("Game Ended")
+      setGameOver({gameOver: true, guessedWord: true})
+      return;
     }
 
-    setCurrAttempt({attempt: currAttempt.attempt + 1, letterPos: 0})
-  }
+    if (currAttempt.attempt === 5) {
+      setGameOver({gameOver: true, guessedWord: false})
+    }
+  };
   return (
     <div className="App">
       <nav>
@@ -86,10 +92,12 @@ function App() {
                   onEnter,
                   correctWord,
                   setDisabledLetters,
-                  disabledLetters}}>
+                  disabledLetters,
+                  setGameOver,
+                  gameOver}}>
         <div className="game">
           <Board/>
-          <Keyboard/>
+          {gameOver.gameOver ? <GameOver /> : <Keyboard/>}
         </div>
       </AppContext.Provider>
       
