@@ -31,8 +31,8 @@ function App() {
         delete item._id
         wordBankArr.push(Object.values(item))
     }
-        tempCorrectWord = wordBankArr[0][Math.floor(Math.random() * wordBankArr.length)]
-      
+        tempCorrectWord = wordBankArr[0][Math.floor(Math.random() * wordBankArr[0].length)]
+
         let newWordSet = new Set(wordBankArr[0])
         setWordSet(newWordSet)
         setCorrectWord(tempCorrectWord)
