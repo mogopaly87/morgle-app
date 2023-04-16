@@ -26,12 +26,14 @@ function App() {
 
       const response = await axios.get(`/api`);
       const booksData = response.data;
-      for await(const item of booksData) {
-        wordBankArr.push(item['aback'])
-        }
-        tempCorrectWord = wordBankArr[Math.floor(Math.random() * wordBankArr.length)]
+      for await(let item of booksData) {
+    
+        delete item._id
+        wordBankArr.push(Object.values(item))
+    }
+        tempCorrectWord = wordBankArr[0][Math.floor(Math.random() * wordBankArr.length)]
       
-        let newWordSet = new Set(wordBankArr)
+        let newWordSet = new Set(wordBankArr[0])
         setWordSet(newWordSet)
         setCorrectWord(tempCorrectWord)
       }
