@@ -1,4 +1,7 @@
 #!/bin/bash
+sudo apt update
+sudo apt-get install nodejs
+sudo apt install npm
 cd ~/morgle-app/front-end
 npm install
 npm run build
